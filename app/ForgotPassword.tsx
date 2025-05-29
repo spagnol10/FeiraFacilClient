@@ -3,17 +3,17 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
-const API_URL = "http://localhost:8080/api/v1/forgot-password";
+const API_URL = "http://localhost:8080/api/v1/user/forgot-password";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState<string>("");
@@ -21,39 +21,41 @@ export default function ForgotPassword() {
   const router = useRouter();
 
   const handleForgotPassword = async () => {
-    if (!email) {
-      Alert.alert("Validação", "Por favor, preencha o e-mail.");
-      return;
+  if (!email) {
+    Alert.alert("Validação", "Por favor, preencha o e-mail.");
+    return;
+  }
+
+  try {
+    setLoading(true);
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "email": email, // <-- e-mail vai no header!
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Não foi possível enviar o e-mail de recuperação.");
     }
 
-    try {
-      setLoading(true);
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Não foi possível enviar o e-mail de recuperação.");
-      }
-
-      Alert.alert(
-        "Sucesso",
-        "Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.",
-        [
-          {
-            text: "OK",
-            onPress: () => router.replace("/"),
-          },
-        ]
-      );
-    } catch (error: any) {
-      Alert.alert("Erro", error.message || "Algo deu errado.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    Alert.alert(
+      "Sucesso",
+      "Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.",
+      [
+        {
+          text: "OK",
+          onPress: () => router.replace("/"),
+        },
+      ]
+    );
+  } catch (error: any) {
+    Alert.alert("Erro", error.message || "Algo deu errado.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <View style={styles.container}>

@@ -1,8 +1,7 @@
-// import { mockRegister } from "@/mock/auth/mockAuthService";
+import FormInput from "@/components/FormInput";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -10,56 +9,73 @@ import {
   Image,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-// import HomeScreen from "./(tabs)/home";
-import { useRouter } from "expo-router";
 
-type RootStackParamList = {
-  Home: undefined;
-  Register: undefined;
-};
+const API_URL = 'http://localhost:8080/api/v1/user/pre';
 
 export default function RegisterScreen() {
-  const [fullName, setFullName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [name, setName] = useState<string>("Wellynton Spagnol");
+  const [email, setEmail] = useState<string>("wrospagnol@gmail.com");
+  const [phone, setPhone] = useState<string>("45991558558");
+  const [password, setPassword] = useState<string>("123456");
+  const [role, setRole] = useState<string>("CUSTOMER");
+  const [showPassword, setShowPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+
   const router = useRouter();
 
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
-  const handleRegister = async () => {
-    if (!fullName || !email || !phone || !password) {
+  const validateForm = () => {
+    if (!name || !email || !phone || !password) {
       Alert.alert("Validação", "Por favor, preencha todos os campos.");
-      return;
+      return false;
     }
-
     if (!agreeTerms) {
       Alert.alert("Validação", "Você deve concordar com os Termos e Condições.");
-      return;
+      return false;
     }
-
-    // try {
-    //   setLoading(true);
-    //   const response = await mockRegister({ fullName, email, phone, password });
-    //   Alert.alert("Sucesso", response.message, [
-    //     {
-    //       text: "OK",
-    //       onPress: () => navigation.replace("Home"),
-    //     },
-    //   ]);
-    // } catch (error: any) {
-    //   Alert.alert("Erro", error.message || "Algo deu errado.");
-    // } finally {
-    //   setLoading(false);
-    // }
+    return true;
   };
+
+  const handleRegister = async () => {
+    if (!validateForm()) return;
+
+    setLoading(true);
+
+    try {
+      const dto = { name, email, phone, password, role };
+      
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "localKey": "Basic Q0hBVkVfUEFSQV9URVNURVNfTE9DQUlTOkZFSVJBX0ZBQ0lMX1NJTklTVFJB",
+        },
+        body: JSON.stringify(dto),
+      });
+
+      if (response.status === 201) {
+        Alert.alert("Sucesso", "Pré-registro realizado com sucesso!");
+        router.push("/");
+      } else {
+        const errorText = await response.text();
+        console.log("URL:", response.url);
+        console.log("Status:", response.status);
+        console.log("Erro:", errorText);
+
+        Alert.alert("Erro", `Falha no pré-registro: ${errorText}`);
+      }
+    } catch (error) {
+      console.error("Erro na requisição:", error);
+      Alert.alert("Erro", "Não foi possível conectar ao servidor.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <View style={styles.container}>
@@ -72,54 +88,42 @@ export default function RegisterScreen() {
       <Text style={styles.title}>Registre-se</Text>
       <Text style={styles.subtitle}>Crie sua conta gratuitamente.</Text>
 
-      <View style={styles.inputContainer}>
-        <FontAwesome name="user" size={20} color="#888" />
-        <TextInput
-          style={styles.input}
-          placeholder="Nome completo"
-          value={fullName}
-          onChangeText={setFullName}
-          autoCapitalize="words"
-          placeholderTextColor="#999"
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <FontAwesome name="envelope" size={20} color="#888" />
-        <TextInput
-          style={styles.input}
-          placeholder="E-mail válido"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          placeholderTextColor="#999"
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <FontAwesome name="phone" size={20} color="#888" />
-        <TextInput
-          style={styles.input}
-          placeholder="Número de telefone"
-          value={phone}
-          onChangeText={setPhone}
-          keyboardType="phone-pad"
-          placeholderTextColor="#999"
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <FontAwesome name="lock" size={20} color="#888" />
-        <TextInput
-          style={styles.input}
-          placeholder="Senha"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          placeholderTextColor="#999"
-        />
-      </View>
+      <FormInput
+        icon="user"
+        placeholder="Nome completo"
+        value={name}
+        onChangeText={setName}
+      />
+      <FormInput
+        icon="envelope"
+        placeholder="E-mail válido"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
+      <FormInput
+        icon="phone"
+        placeholder="Número de telefone"
+        value={phone}
+        onChangeText={setPhone}
+        keyboardType="phone-pad"
+      />
+      <FormInput
+        icon="lock"
+        placeholder="Senha"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry={!showPassword}
+        rightIcon={
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <FontAwesome
+              name={showPassword ? "eye" : "eye-slash"}
+              size={20}
+              color="#888"
+            />
+          </TouchableOpacity>
+        }
+      />
 
       <View style={styles.checkboxRow}>
         <BouncyCheckbox
@@ -131,7 +135,7 @@ export default function RegisterScreen() {
           onPress={(checked: boolean) => setAgreeTerms(checked)}
         />
         <Text style={styles.termsText}>
-          Ao marcar a caixa, você concorda com nossos{" "}
+          Você concorda com nossos{" "}
           <Text style={styles.termsLink}>Termos e Condições</Text>.
         </Text>
       </View>
@@ -146,17 +150,21 @@ export default function RegisterScreen() {
         ) : (
           <>
             <Text style={styles.registerText}>Registrar</Text>
-            <MaterialIcons name="arrow-forward" size={20} color="#fff" style={{ marginLeft: 8 }} />
+            <MaterialIcons
+              name="arrow-forward"
+              size={20}
+              color="#fff"
+              style={{ marginLeft: 8 }}
+            />
           </>
         )}
       </TouchableOpacity>
 
       <Text style={styles.loginPrompt}>
-        Já possui uma conta? <Text
-          style={styles.loginLink}
-        //  onPress={() => router.push("/home")}
-        >
-          Entrar</Text>
+        Já possui uma conta?{" "}
+        <Text style={styles.loginLink} onPress={() => router.push("/")}>
+          Entrar
+        </Text>
       </Text>
     </View>
   );
@@ -186,21 +194,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#666",
     marginBottom: 24,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f0f0f0",
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    height: 48,
-    marginBottom: 14,
-  },
-  input: {
-    flex: 1,
-    marginLeft: 10,
-    fontSize: 16,
-    color: "#000",
   },
   checkboxRow: {
     flexDirection: "row",

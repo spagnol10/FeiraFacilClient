@@ -9,16 +9,20 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
+import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 const API_URL = 'http://localhost:8080/api/v1/auth';
 
 export default function Login() {
   const router = useRouter();
-  const [email, setEmail] = useState("well@gmail.com");
+  const [email, setEmail] = useState("wrospagnol@gmail.com");
   const [password, setPassword] = useState("123456");
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
+
 
   useEffect(() => {
     const loadRememberedEmail = async () => {
@@ -32,36 +36,53 @@ export default function Login() {
   }, []);
 
   const handleLogin = async () => {
-  try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-    if (!response.ok) throw new Error("Usuário não encontrado");
+      if (!response.ok) {
+      
+        const errorData = await response.json();
+      
+        Alert.alert("Erro", errorData.message || "Usuário não encontrado");
+      
+        return;
+      
+      }
 
-    const userData = await response.json();
+      const userData = await response.json();
 
-    // Salvar ou remover e-mail com base no checkbox
-    if (rememberMe) {
-      await AsyncStorage.setItem("rememberedEmail", email);
-    } else {
-      await AsyncStorage.removeItem("rememberedEmail");
+      if (rememberMe) {
+      
+        await AsyncStorage.setItem("rememberedEmail", email);
+      
+      } else {
+      
+        await AsyncStorage.removeItem("rememberedEmail");
+      
+      }
+
+      Alert.alert("Sucesso", "Login bem-sucedido!");
+
+      router.push("/(tabs)/home");
+
+    } catch (error: any) {
+
+      console.warn("API falhou:", error.message);
+
+      Alert.alert("Erro", "Não foi possível conectar. Tente novamente.");
+
     }
 
-    Alert.alert("Sucesso", "Login bem-sucedido!");
-    // router.push("/(tabs)/home");
-  } catch (error: any) {
-    console.warn("API falhou:", error.message);
-    // router.push("/(tabs)/home");
-  }
-};
+  };
 
   const handleForgotPassword = () => {
     router.push("/ForgotPassword");
@@ -99,19 +120,35 @@ export default function Login() {
           style={styles.input}
           placeholder="Senha"
           placeholderTextColor="#999"
-          secureTextEntry
+          secureTextEntry={!showPassword}
           value={password}
           onChangeText={setPassword}
         />
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <FontAwesome
+            name={showPassword ? "eye" : "eye-slash"}
+            size={20}
+            color="#888"
+          />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.optionsRow}>
         <View style={styles.checkboxContainer}>
-          Colocar checkbox para lembrar senha
+          <BouncyCheckbox
+            size={18}
+            fillColor="#008066"
+            unFillColor="#fff"
+            iconStyle={{ borderColor: "#008066" }}
+            isChecked={agreeTerms}
+            onPress={(checked: boolean) => setAgreeTerms(checked)}
+          />
+          <Text style={styles.checkboxText}>
+            <Text style={styles.termsLink}>Termos e Condições</Text>.
+          </Text>
         </View>
-
         <TouchableOpacity onPress={handleForgotPassword}>
-          <Text style={styles.forgotPassword}>Esqueceu a senha?</Text>
+          <Text style={styles.forgotPasswordText}>Esqueci minha senha</Text>
         </TouchableOpacity>
       </View>
 
@@ -169,25 +206,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#000",
   },
-  optionsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 24,
-
-  },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  checkboxLabel: {
-    marginLeft: 4,
-    color: "#555",
-  },
-  forgotPassword: {
-    color: "#008066",
-    fontSize: 13,
-  },
   loginButton: {
     backgroundColor: "#008066",
     paddingVertical: 14,
@@ -208,5 +226,34 @@ const styles = StyleSheet.create({
   registerLink: {
     color: "#008066",
     fontWeight: "600",
+  },
+  optionsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,            
+    flexWrap: "wrap", 
+  },
+  checkboxText: {
+    marginLeft: 8,
+    color: "#555",
+    flexShrink: 1,
+    flexWrap: "wrap",
+    fontSize: 10,
+  },
+  termsLink: {
+    color: "#008066",
+    textDecorationLine: "underline",
+  },
+
+  forgotPasswordText: {
+    color: "#008066",
+    fontWeight: "600",
+    fontSize: 12,
   },
 });
