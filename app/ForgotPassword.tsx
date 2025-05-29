@@ -16,46 +16,51 @@ import {
 const API_URL = "http://localhost:8080/api/v1/user/forgot-password";
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState<string>("");
+  const [email, setEmail] = useState<string>("wrospagnol@gmail.com");
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const handleForgotPassword = async () => {
-  if (!email) {
-    Alert.alert("Validação", "Por favor, preencha o e-mail.");
-    return;
-  }
-
-  try {
-    setLoading(true);
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "email": email, // <-- e-mail vai no header!
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Não foi possível enviar o e-mail de recuperação.");
+    if (!email) {
+      Alert.alert("Validação", "Por favor, preencha o e-mail.");
+      return;
     }
 
-    Alert.alert(
-      "Sucesso",
-      "Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.",
-      [
-        {
-          text: "OK",
-          onPress: () => router.replace("/"),
+    try {
+      setLoading(true);
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          email: email,
         },
-      ]
-    );
-  } catch (error: any) {
-    Alert.alert("Erro", error.message || "Algo deu errado.");
-  } finally {
-    setLoading(false);
-  }
-};
+      });
+
+      if (!response.ok) {
+        throw new Error("Não foi possível enviar o e-mail de recuperação.");
+      }
+
+      Alert.alert(
+        "Sucesso",
+        "Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.",
+        [
+          {
+            text: "OK",
+            onPress: () =>
+              router.push({
+                pathname: "/ResetPassword",
+                params: { email: email },
+              }),
+          },
+        ]
+      );
+    } catch (error: any) {
+      Alert.alert("Erro", error.message || "Algo deu errado.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <View style={styles.container}>
