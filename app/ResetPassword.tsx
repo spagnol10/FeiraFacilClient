@@ -1,21 +1,21 @@
-// screens/ResetPassword.tsx
 import { useResetPassword } from "@/hooks/useResetPassword";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function ResetPassword() {
   const { token } = useLocalSearchParams<{ token: string }>();
-  const [email] = useState<string>("wrospagnol@gmail.com"); 
+  const [email] = useState<string>("wrospagnol@gmail.com");
 
   const {
     newPassword,
@@ -25,6 +25,9 @@ export default function ResetPassword() {
     loading,
     handleResetPassword,
   } = useResetPassword(email, token || "");
+
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -36,21 +39,42 @@ export default function ResetPassword() {
       <Text style={styles.title}>Redefinir Senha</Text>
       <Text style={styles.subtitle}>Digite sua nova senha abaixo.</Text>
 
-      <TextInput style={styles.input} value={email} editable={false} placeholderTextColor="#999" />
       <TextInput
-        style={styles.input}
-        placeholder="Nova senha"
-        secureTextEntry
-        value={newPassword}
-        onChangeText={setNewPassword}
+        style={[styles.input, { color: "#888" }]}
+        value={email}
+        editable={false}
+        placeholderTextColor="#999"
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirmar nova senha"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
+
+      {/* Campo Nova Senha */}
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.inputField}
+          placeholder="Nova senha"
+          secureTextEntry={!showNewPassword}
+          value={newPassword}
+          onChangeText={setNewPassword}
+          placeholderTextColor="#999"
+        />
+        <TouchableOpacity onPress={() => setShowNewPassword(!showNewPassword)}>
+          <FontAwesome name={showNewPassword ? "eye" : "eye-slash"} size={20} color="#888" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Campo Confirmar Nova Senha */}
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.inputField}
+          placeholder="Confirmar nova senha"
+          secureTextEntry={!showConfirmPassword}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          placeholderTextColor="#999"
+        />
+        <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+          <FontAwesome name={showConfirmPassword ? "eye" : "eye-slash"} size={20} color="#888" />
+        </TouchableOpacity>
+      </View>
 
       <TouchableOpacity
         style={[styles.button, loading && { opacity: 0.6 }]}
@@ -90,6 +114,25 @@ const styles = StyleSheet.create({
     color: "#666",
     marginBottom: 24,
   },
+  illustration: {
+    width: "100%",
+    height: 180,
+    marginBottom: 20,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    height: 48,
+    marginBottom: 14,
+  },
+  inputField: {
+    flex: 1,
+    fontSize: 16,
+    color: "#000",
+  },
   input: {
     backgroundColor: "#f0f0f0",
     paddingHorizontal: 12,
@@ -112,10 +155,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
-  },
-  illustration: {
-    width: "100%",
-    height: 180,
-    marginBottom: 20,
   },
 });
