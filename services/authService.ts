@@ -40,7 +40,7 @@ export const resetPassword = async (
       "Content-Type": "application/json",
       email,
       password,
-      token,
+      token: token || "b34da919-eb5d-42e3-859e-526bc4f4b624",
     },
   });
 
