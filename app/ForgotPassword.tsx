@@ -1,10 +1,10 @@
+import { useForgotPassword } from "@/hooks/useForgotPassword";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
 import {
   ActivityIndicator,
-  Alert,
   Image,
   StyleSheet,
   Text,
@@ -13,54 +13,9 @@ import {
   View,
 } from "react-native";
 
-const API_URL = "http://localhost:8080/api/v1/user/forgot-password";
-
-export default function ForgotPassword() {
-  const [email, setEmail] = useState<string>("wrospagnol@gmail.com");
-  const [loading, setLoading] = useState<boolean>(false);
+export default function ForgotPasswordScreen() {
+  const { email, setEmail, loading, handleForgotPassword } = useForgotPassword();
   const router = useRouter();
-
-  const handleForgotPassword = async () => {
-    if (!email) {
-      Alert.alert("Validação", "Por favor, preencha o e-mail.");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          email: email,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Não foi possível enviar o e-mail de recuperação.");
-      }
-
-      Alert.alert(
-        "Sucesso",
-        "Se o e-mail estiver cadastrado, você receberá as instruções para redefinir sua senha.",
-        [
-          {
-            text: "OK",
-            onPress: () =>
-              router.push({
-                pathname: "/ResetPassword",
-                params: { email: email },
-              }),
-          },
-        ]
-      );
-    } catch (error: any) {
-      Alert.alert("Erro", error.message || "Algo deu errado.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
 
   return (
     <View style={styles.container}>
@@ -105,10 +60,7 @@ export default function ForgotPassword() {
 
       <Text style={styles.loginPrompt}>
         Lembrou sua senha?{" "}
-        <Text
-          style={styles.loginLink}
-          onPress={() => router.replace("/")}
-        >
+        <Text style={styles.loginLink} onPress={() => router.replace("/")}>
           Entrar
         </Text>
       </Text>

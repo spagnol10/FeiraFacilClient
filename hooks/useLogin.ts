@@ -1,10 +1,8 @@
-// src/hooks/useLogin.ts
+import { authService } from "@/services/authService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
-
-const API_URL = 'http://localhost:8080/api/v1/auth';
 
 export const useLogin = () => {
   const router = useRouter();
@@ -26,27 +24,8 @@ export const useLogin = () => {
   }, []);
 
   const handleLogin = async () => {
-    if (!agreeTerms) {
-      Alert.alert("Atenção", "Você deve aceitar os termos para continuar.");
-      return;
-    }
-
     try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        Alert.alert("Erro", errorData.message || "Usuário não encontrado");
-        return;
-      }
-
-      const userData = await response.json();
+      const userData = await authService.login(email, password);
 
       if (rememberMe) {
         await AsyncStorage.setItem("rememberedEmail", email);
@@ -59,7 +38,7 @@ export const useLogin = () => {
 
     } catch (error: any) {
       console.warn("API falhou:", error.message);
-      Alert.alert("Erro", "Não foi possível conectar. Tente novamente.");
+      Alert.alert("Erro", error.message || "Não foi possível conectar.");
     }
   };
 

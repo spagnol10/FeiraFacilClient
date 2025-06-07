@@ -1,19 +1,15 @@
 import { useLogin } from "@/hooks/useLogin";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 export default function Login() {
   const {
     email,
     password,
-    rememberMe,
     showPassword,
-    agreeTerms,
     setEmail,
     setPassword,
     setShowPassword,
-    setAgreeTerms,
     handleLogin,
     handleForgotPassword,
     handleRegister,
@@ -57,19 +53,6 @@ export default function Login() {
       </View>
 
       <View style={styles.optionsRow}>
-        <View style={styles.checkboxContainer}>
-          <BouncyCheckbox
-            size={18}
-            fillColor="#008066"
-            unFillColor="#fff"
-            iconStyle={{ borderColor: "#008066" }}
-            isChecked={agreeTerms}
-            onPress={(checked: boolean) => setAgreeTerms(checked)}
-          />
-          <Text style={styles.checkboxText}>
-            <Text style={styles.termsLink}>Termos e Condições</Text>.
-          </Text>
-        </View>
         <TouchableOpacity onPress={handleForgotPassword}>
           <Text style={styles.forgotPasswordText}>Esqueci minha senha</Text>
         </TouchableOpacity>
@@ -89,7 +72,6 @@ export default function Login() {
   );
 }
 
-// styles aqui permanece igual
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -153,9 +135,9 @@ const styles = StyleSheet.create({
   },
   optionsRow: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
+    alignItems: "flex-end",
+    justifyContent: "flex-end",
+    marginBottom: 16,
   },
   checkboxContainer: {
     flexDirection: "row",
