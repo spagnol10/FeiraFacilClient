@@ -1,9 +1,38 @@
 const API_BASE_URL = "http://localhost:8080/api/v1";
 
+const headers = {
+  "Content-Type": "application/json",
+};
+
+export const preRegister = async (user: {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  role: string;
+}) => {
+  const response = await fetch(`${API_BASE_URL}/user/pre`, {
+    method: "POST",
+    headers: {
+      ...headers,
+      localKey:
+        "Basic Q0hBVkVfUEFSQV9URVNURVNfTE9DQUlTOkZFSVJBX0ZBQ0lMX1NJTklTVFJB",
+    },
+    body: JSON.stringify(user),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || "Erro no pré-registro.");
+  }
+
+  return await response.json();
+};
+
 export const login = async (email: string, password: string) => {
   const response = await fetch(`${API_BASE_URL}/auth`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify({ email, password }),
   });
 
@@ -18,10 +47,7 @@ export const login = async (email: string, password: string) => {
 export const sendForgotPasswordEmail = async (email: string) => {
   const response = await fetch(`${API_BASE_URL}/user/forgot-password`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      email,
-    },
+    headers: { ...headers, email },
   });
 
   if (!response.ok) {
@@ -37,10 +63,10 @@ export const resetPassword = async (
   const response = await fetch(`${API_BASE_URL}/user/reset-password`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      ...headers,
       email,
       password,
-      token: token || "b34da919-eb5d-42e3-859e-526bc4f4b624",
+      token,
     },
   });
 

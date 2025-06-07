@@ -1,4 +1,5 @@
 import FormInput from "@/components/FormInput";
+import { useRegister } from "@/hooks/useRegister";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
@@ -14,18 +15,15 @@ import {
 } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
-const API_URL = 'http://localhost:8080/api/v1/user/pre';
-
 export default function RegisterScreen() {
-  const [name, setName] = useState<string>("Wellynton Spagnol");
-  const [email, setEmail] = useState<string>("wrospagnol@gmail.com");
-  const [phone, setPhone] = useState<string>("45991558558");
-  const [password, setPassword] = useState<string>("123456");
-  const [role, setRole] = useState<string>("CUSTOMER");
+  const [name, setName] = useState("Wellynton Spagnol");
+  const [email, setEmail] = useState("wrospagnol@gmail.com");
+  const [phone, setPhone] = useState("45991558558");
+  const [password, setPassword] = useState("123456");
   const [showPassword, setShowPassword] = useState(false);
-  const [agreeTerms, setAgreeTerms] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
 
+  const { handleRegister, loading } = useRegister();
   const router = useRouter();
 
   const validateForm = () => {
@@ -40,42 +38,17 @@ export default function RegisterScreen() {
     return true;
   };
 
-  const handleRegister = async () => {
+  const onSubmit = () => {
     if (!validateForm()) return;
 
-    setLoading(true);
-
-    try {
-      const dto = { name, email, phone, password, role };
-      
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "localKey": "Basic Q0hBVkVfUEFSQV9URVNURVNfTE9DQUlTOkZFSVJBX0ZBQ0lMX1NJTklTVFJB",
-        },
-        body: JSON.stringify(dto),
-      });
-
-      if (response.status === 201) {
-        Alert.alert("Sucesso", "Pré-registro realizado com sucesso!");
-        router.push("/");
-      } else {
-        const errorText = await response.text();
-        console.log("URL:", response.url);
-        console.log("Status:", response.status);
-        console.log("Erro:", errorText);
-
-        Alert.alert("Erro", `Falha no pré-registro: ${errorText}`);
-      }
-    } catch (error) {
-      console.error("Erro na requisição:", error);
-      Alert.alert("Erro", "Não foi possível conectar ao servidor.");
-    } finally {
-      setLoading(false);
-    }
+    handleRegister({
+      name,
+      email,
+      phone,
+      password,
+      role: "CUSTOMER",
+    });
   };
-
 
   return (
     <View style={styles.container}>
@@ -88,26 +61,9 @@ export default function RegisterScreen() {
       <Text style={styles.title}>Registre-se</Text>
       <Text style={styles.subtitle}>Crie sua conta gratuitamente.</Text>
 
-      <FormInput
-        icon="user"
-        placeholder="Nome completo"
-        value={name}
-        onChangeText={setName}
-      />
-      <FormInput
-        icon="envelope"
-        placeholder="E-mail válido"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-      <FormInput
-        icon="phone"
-        placeholder="Número de telefone"
-        value={phone}
-        onChangeText={setPhone}
-        keyboardType="phone-pad"
-      />
+      <FormInput icon="user" placeholder="Nome completo" value={name} onChangeText={setName} />
+      <FormInput icon="envelope" placeholder="E-mail válido" value={email} onChangeText={setEmail} keyboardType="email-address" />
+      <FormInput icon="phone" placeholder="Número de telefone" value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
       <FormInput
         icon="lock"
         placeholder="Senha"
@@ -116,11 +72,7 @@ export default function RegisterScreen() {
         secureTextEntry={!showPassword}
         rightIcon={
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <FontAwesome
-              name={showPassword ? "eye" : "eye-slash"}
-              size={20}
-              color="#888"
-            />
+            <FontAwesome name={showPassword ? "eye" : "eye-slash"} size={20} color="#888" />
           </TouchableOpacity>
         }
       />
@@ -142,7 +94,7 @@ export default function RegisterScreen() {
 
       <TouchableOpacity
         style={[styles.registerButton, loading && { opacity: 0.6 }]}
-        onPress={handleRegister}
+        onPress={onSubmit}
         disabled={loading}
       >
         {loading ? (
@@ -150,12 +102,7 @@ export default function RegisterScreen() {
         ) : (
           <>
             <Text style={styles.registerText}>Registrar</Text>
-            <MaterialIcons
-              name="arrow-forward"
-              size={20}
-              color="#fff"
-              style={{ marginLeft: 8 }}
-            />
+            <MaterialIcons name="arrow-forward" size={20} color="#fff" style={{ marginLeft: 8 }} />
           </>
         )}
       </TouchableOpacity>

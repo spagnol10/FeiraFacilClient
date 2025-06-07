@@ -1,6 +1,7 @@
+import FormInput from "@/components/FormInput";
 import { useLogin } from "@/hooks/useLogin";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function Login() {
   const {
@@ -26,31 +27,30 @@ export default function Login() {
       <Text style={styles.title}>Bem-vindo ao FeiraFácil</Text>
       <Text style={styles.subtitle}>Faça login para acessar sua conta</Text>
 
-      <View style={styles.inputContainer}>
-        <FontAwesome name="envelope" size={20} color="#888" />
-        <TextInput
-          style={styles.input}
-          placeholder="Digite seu e-mail"
-          placeholderTextColor="#999"
-          value={email}
-          onChangeText={setEmail}
-        />
-      </View>
+      <FormInput
+        icon="envelope"
+        placeholder="Digite seu e-mail"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
 
-      <View style={styles.inputContainer}>
-        <FontAwesome name="lock" size={20} color="#888" />
-        <TextInput
-          style={styles.input}
-          placeholder="Senha"
-          placeholderTextColor="#999"
-          secureTextEntry={!showPassword}
-          value={password}
-          onChangeText={setPassword}
-        />
-        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <FontAwesome name={showPassword ? "eye" : "eye-slash"} size={20} color="#888" />
-        </TouchableOpacity>
-      </View>
+      <FormInput
+        icon="lock"
+        placeholder="Senha"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry={!showPassword}
+        rightIcon={
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <FontAwesome
+              name={showPassword ? "eye" : "eye-slash"}
+              size={20}
+              color="#888"
+            />
+          </TouchableOpacity>
+        }
+      />
 
       <View style={styles.optionsRow}>
         <TouchableOpacity onPress={handleForgotPassword}>
@@ -97,21 +97,6 @@ const styles = StyleSheet.create({
     color: "#666",
     marginBottom: 24,
   },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f0f0f0",
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    height: 48,
-    marginBottom: 16,
-  },
-  input: {
-    flex: 1,
-    marginLeft: 10,
-    fontSize: 16,
-    color: "#000",
-  },
   loginButton: {
     backgroundColor: "#008066",
     paddingVertical: 14,
@@ -139,24 +124,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     marginBottom: 16,
   },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,            
-    flexWrap: "wrap", 
-  },
-  checkboxText: {
-    marginLeft: 8,
-    color: "#555",
-    flexShrink: 1,
-    flexWrap: "wrap",
-    fontSize: 10,
-  },
-  termsLink: {
-    color: "#008066",
-    textDecorationLine: "underline",
-  },
-
   forgotPasswordText: {
     color: "#008066",
     fontWeight: "600",
