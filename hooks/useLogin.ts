@@ -1,4 +1,4 @@
-import { authService } from "@/services/authService";
+import { login } from "@/services/authService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -6,11 +6,13 @@ import { Alert } from "react-native";
 
 export const useLogin = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("wrospagnol@gmail.com");
-  const [password, setPassword] = useState("1234567");
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadRememberedEmail = async () => {
@@ -25,7 +27,8 @@ export const useLogin = () => {
 
   const handleLogin = async () => {
     try {
-      const userData = await authService.login(email, password);
+      setLoading(true);
+      const userData = await login(email, password);
 
       if (rememberMe) {
         await AsyncStorage.setItem("rememberedEmail", email);
@@ -35,20 +38,15 @@ export const useLogin = () => {
 
       Alert.alert("Sucesso", "Login bem-sucedido!");
       router.push("/(tabs)/home");
-
     } catch (error: any) {
-      console.warn("API falhou:", error.message);
-      Alert.alert("Erro", error.message || "Não foi possível conectar.");
+      Alert.alert("Erro", error.message || "Erro ao fazer login.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleForgotPassword = () => {
-    router.push("/ForgotPassword");
-  };
-
-  const handleRegister = () => {
-    router.push("/RegisterScreen");
-  };
+  const handleForgotPassword = () => router.push("/ForgotPassword");
+  const handleRegister = () => router.push("/RegisterScreen");
 
   return {
     email,
@@ -56,6 +54,7 @@ export const useLogin = () => {
     rememberMe,
     showPassword,
     agreeTerms,
+    loading,
     setEmail,
     setPassword,
     setRememberMe,

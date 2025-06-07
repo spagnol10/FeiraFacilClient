@@ -1,4 +1,4 @@
-import { authService } from "@/services/authService";
+import { resetPassword } from "@/services/authService";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert } from "react-native";
@@ -22,12 +22,12 @@ export const useResetPassword = (email: string, token: string) => {
 
     try {
       setLoading(true);
-      await authService.resetPassword(email, newPassword, token);
+      await resetPassword(email, newPassword, token);
       Alert.alert("Sucesso", "Senha redefinida com sucesso!", [
         { text: "OK", onPress: () => router.replace("/") },
       ]);
     } catch (error: any) {
-      Alert.alert("Erro", error.message || "Algo deu errado.");
+      Alert.alert("Erro", error.message || "Erro ao redefinir a senha.");
     } finally {
       setLoading(false);
     }

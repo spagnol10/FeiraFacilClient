@@ -1,52 +1,51 @@
-const BASE_URL = "http://localhost:8080/api/v1";
+const API_BASE_URL = "http://localhost:8080/api/v1";
 
-export const authService = {
-  async login(email: string, password: string) {
-    const response = await fetch(`${BASE_URL}/auth`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+export const login = async (email: string, password: string) => {
+  const response = await fetch(`${API_BASE_URL}/auth`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Erro ao fazer login.");
-    }
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || "Usuário não encontrado.");
+  }
 
-    return response.json();
-  },
+  return data;
+};
 
-  async forgotPassword(email: string) {
-    const response = await fetch(`${BASE_URL}/user/forgot-password`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        email,
-      },
-    });
+export const sendForgotPasswordEmail = async (email: string) => {
+  const response = await fetch(`${API_BASE_URL}/user/forgot-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      email,
+    },
+  });
 
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(text || "Erro ao enviar e-mail de recuperação.");
-    }
+  if (!response.ok) {
+    throw new Error("Não foi possível enviar o e-mail de recuperação.");
+  }
+};
 
-    return response;
-  },
+export const resetPassword = async (
+  email: string,
+  password: string,
+  token: string
+): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/user/reset-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      email,
+      password,
+      token,
+    },
+  });
 
-  async resetPassword(email: string, password: string, token: string) {
-    const response = await fetch(`${BASE_URL}/user/reset-password`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        email,
-        password,
-        token,
-      },
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || "Erro ao redefinir a senha.");
-    }
-  },
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || "Erro ao redefinir a senha.");
+  }
 };

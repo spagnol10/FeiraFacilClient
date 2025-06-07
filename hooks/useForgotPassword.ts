@@ -1,10 +1,10 @@
-import { authService } from "@/services/authService";
+import { sendForgotPasswordEmail } from "@/services/authService";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert } from "react-native";
 
 export function useForgotPassword() {
-  const [email, setEmail] = useState("wrospagnol@gmail.com");
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -16,7 +16,7 @@ export function useForgotPassword() {
 
     try {
       setLoading(true);
-      await authService.forgotPassword(email);
+      await sendForgotPasswordEmail(email);
 
       Alert.alert(
         "Sucesso",
@@ -25,15 +25,12 @@ export function useForgotPassword() {
           {
             text: "OK",
             onPress: () =>
-              router.push({
-                pathname: "/ResetPassword",
-                params: { email },
-              }),
+              router.push({ pathname: "/ResetPassword", params: { email } }),
           },
         ]
       );
     } catch (error: any) {
-      Alert.alert("Erro", error.message || "Algo deu errado.");
+      Alert.alert("Erro", error.message || "Erro ao enviar e-mail.");
     } finally {
       setLoading(false);
     }
