@@ -7,8 +7,8 @@ import { Alert } from "react-native";
 export const useLogin = () => {
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("wrospagnol@gmail.com");
+  const [password, setPassword] = useState("123456");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);

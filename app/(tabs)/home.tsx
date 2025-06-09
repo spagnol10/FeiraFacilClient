@@ -3,111 +3,135 @@ import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
+  FlatList,
   Image,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
-// function TabBarIcon(props: { name: React.ComponentProps<typeof FontAwesome>["name"]; color: string }) {
-//   return <FontAwesome size={18} style={{ marginBottom: -3 }} {...props} />;
-// }
-
-// const ProductCard = ({ product, onPress }: { product: Product; onPress: () => void }) => (
-//   <TouchableOpacity onPress={onPress} style={styles.productCard}>
-//     <Image source={{ uri: product.imageBase64 }} style={styles.productImage} />
-//     <Text style={styles.productName}>{product.name}</Text>
-//     <Text style={styles.productPrice}>{product.price}</Text>
-//   </TouchableOpacity>
-// );
-
-const API_URL = "http://localhost:8080/products";
+const API_URL = "http://192.168.0.123:8080/api/v1/product"; // Altere para seu IP local
 
 export default function HomeScreen() {
-  // const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeCategory, setActiveCategory] = useState("Fruits");
+
   const navigation = useNavigation();
   const router = useRouter();
 
-  // const [user] = useState(mockUser);
-
-  const fetchProducts = async () => {
+  const fetchProducts = async (categoryFilter: string = "", nameFilter: string = "") => {
     try {
-      const response = await fetch(API_URL);
+      setLoading(true);
+      const url = new URL(API_URL);
+      url.searchParams.append("companyId", "1"); // Altere conforme necessário
+      if (categoryFilter) url.searchParams.append("category", categoryFilter);
+      if (nameFilter) url.searchParams.append("name", nameFilter);
+      url.searchParams.append("inStock", "true");
+
+      const response = await fetch(url.toString());
       const data = await response.json();
-      // setProducts(data);
+      setProducts(data);
     } catch (error) {
-      console.error("Erro ao buscar produtos da API, usando mock:", error);
-      // setProducts(mockProducts);
+      console.error("Erro ao buscar produtos:", error);
+      Alert.alert("Erro", "Não foi possível carregar os produtos.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(activeCategory, searchTerm);
   }, []);
 
   const openNotifications = () => {
     Alert.alert("Notificações", "Abrindo notificações...");
   };
 
-  const openMenu = () => {
-    Alert.alert("Menu", "Abrindo menu lateral...");
-  };
+  const categories = ["Fruits", "Vegetables", "Cereals", "Flowers"];
 
   return (
     <View style={styles.container}>
-      {/* Usa nome do mockUser no header */}
-      {/* <Header userName={user.name} onBackPress={openMenu} onNotificationsPress={openNotifications} /> */}
-
-      <View style={{ marginTop: 100 }}>
-        <Text style={styles.title}>Delicious food for you</Text>
-
-        <View style={styles.discountCard}>
-          <View>
-            <Text style={styles.discountText}>A special discount</Text>
-            <Text style={styles.discountValue}>Up to 50%</Text>
-          </View>
-          <Image source={require("@/assets/images/logo.png")} style={styles.discountImage} />
-        </View>
-
-        <TouchableOpacity style={styles.voucherButton}>
-          <Text style={styles.voucherButtonText}>Claim voucher</Text>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Delicious{"\n"}food for you</Text>
+        <TouchableOpacity onPress={openNotifications}>
+          <FontAwesome name="bell" size={22} color="#333" />
         </TouchableOpacity>
-
-        <View style={styles.searchContainer}>
-          <FontAwesome name="search" size={18} color="#888" />
-          <TextInput placeholder="Search..." style={styles.searchInput} />
-        </View>
-
-        <View style={styles.categories}>
-          <Text style={styles.category}>Fruits</Text>
-          <Text style={styles.category}>Vegetables</Text>
-          <Text style={styles.category}>Fairs</Text>
-        </View>
-
-        {/* {loading ? (
-          <ActivityIndicator size="large" color="#00D361" style={{ marginTop: 20 }} />
-        ) : (
-          <FlatList
-            data={products}
-            renderItem={({ item }) => (
-              <ProductCard
-                product={item}
-                onPress={() => router.push("/(tabs)/carrinho")}
-              />
-            )}
-            keyExtractor={(item, index) => item.id?.toString() || index.toString()}
-            horizontal
-            contentContainerStyle={styles.productList}
-            ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
-          />
-        )} */}
       </View>
+
+      {/* Discount Card */}
+      <View style={styles.discountCard}>
+        <View>
+          <Text style={styles.discountText}>Get Special Discount</Text>
+          <Text style={styles.discountValue}>Up To 50%</Text>
+        </View>
+        <Image source={require("@/assets/images/logo.png")} style={styles.discountImage} />
+      </View>
+
+      {/* Voucher Button */}
+      <TouchableOpacity style={styles.voucherButton}>
+        <Text style={styles.voucherButtonText}>Claim Voucher</Text>
+      </TouchableOpacity>
+
+      {/* Search */}
+      <View style={styles.searchContainer}>
+        <FontAwesome name="search" size={18} color="#888" />
+        <TextInput
+          placeholder="Search Fruits, Vegetables"
+          value={searchTerm}
+          onChangeText={setSearchTerm}
+          onSubmitEditing={() => fetchProducts(activeCategory, searchTerm)}
+          style={styles.searchInput}
+        />
+      </View>
+
+      {/* Categories */}
+      <View style={styles.categories}>
+        {categories.map((cat) => (
+          <TouchableOpacity key={cat} onPress={() => {
+            setActiveCategory(cat);
+            fetchProducts(cat, searchTerm);
+          }}>
+            <Text style={[styles.category, activeCategory === cat && styles.categoryActive]}>
+              {cat}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Products List */}
+      {loading ? (
+        <ActivityIndicator size="large" color="#00D361" style={{ marginTop: 20 }} />
+      ) : (
+        <FlatList
+          data={products}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.productCard}
+              onPress={() => router.push("/(tabs)/carrinho")}
+            >
+              <Image
+                source={{ uri: item.imageBase64 || "https://via.placeholder.com/60" }}
+                style={styles.productImage}
+              />
+              <Text style={styles.productName}>{item.name}</Text>
+              <Text style={styles.productPrice}>${item.price?.toFixed(2)}</Text>
+              <Text style={styles.orderText}>Order</Text>
+            </TouchableOpacity>
+          )}
+          keyExtractor={(item, index) => item.id?.toString() || index.toString()}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.productList}
+          ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
+        />
+      )}
     </View>
   );
 }
@@ -115,14 +139,20 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
+    paddingTop: 60,
     paddingHorizontal: 16,
     backgroundColor: "#fff",
   },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 24,
+  },
   title: {
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: "bold",
-    marginBottom: 16,
+    color: "#333",
   },
   discountCard: {
     flexDirection: "row",
@@ -130,12 +160,12 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 10,
     alignItems: "center",
-    marginBottom: 16,
+    justifyContent: "space-between",
+    marginBottom: 12,
   },
   discountText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "300",
   },
   discountValue: {
     color: "#fff",
@@ -145,8 +175,7 @@ const styles = StyleSheet.create({
   discountImage: {
     width: 80,
     height: 80,
-    marginLeft: 16,
-    borderRadius: 8,
+    borderRadius: 10,
   },
   voucherButton: {
     backgroundColor: "#fff",
@@ -178,13 +207,18 @@ const styles = StyleSheet.create({
   },
   categories: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    gap: 16,
     marginBottom: 16,
   },
   category: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#444",
+    color: "#888",
+  },
+  categoryActive: {
+    color: "#00D361",
+    fontWeight: "bold",
+    textDecorationLine: "underline",
   },
   productList: {
     paddingVertical: 10,
@@ -192,10 +226,9 @@ const styles = StyleSheet.create({
   productCard: {
     backgroundColor: "#f0f0f0",
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: "center",
-    width: 120,
-    marginRight: 12,
+    width: 140,
   },
   productImage: {
     width: 60,
@@ -206,13 +239,20 @@ const styles = StyleSheet.create({
   productName: {
     marginTop: 8,
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: "600",
     textAlign: "center",
+    color: "#333",
   },
   productPrice: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
+    fontWeight: "bold",
+    color: "#00D361",
     marginTop: 4,
+  },
+  orderText: {
+    marginTop: 4,
+    fontSize: 12,
+    color: "#00D361",
+    fontWeight: "500",
   },
 });
