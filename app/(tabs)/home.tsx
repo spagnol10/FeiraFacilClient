@@ -66,11 +66,57 @@ export default function HomeScreen() {
         <FlatList
           data={products}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.productCard} onPress={() => router.push("/(tabs)/carrinho")}>
-              <Image source={{ uri: item.imageBase64 || "https://via.placeholder.com/60" }} style={styles.productImage} />
+            <TouchableOpacity
+              style={styles.productCard}
+              onPress={() => router.push("/(tabs)/carrinho")}>
+              <Image 
+              source={{ uri: item.imageBase64 || "https://via.placeholder.com/60" }} style={styles.productImage} />
               <Text style={styles.productName}>{item.name}</Text>
-              <Text style={styles.productPrice}>${item.price?.toFixed(2)}</Text>
-              <Text style={styles.orderText}>Order</Text>
+              <Text style={styles.productPrice}>R${item.price?.toFixed(2)}</Text>
+            </TouchableOpacity>
+          )}
+          keyExtractor={(item, index) => item.id?.toString() || index.toString()}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.productList}
+          ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
+        />
+      )}
+      {loading ? (
+        <ActivityIndicator size="large" color="#00D361" style={{ marginTop: 20 }} />
+      ) : (
+        <FlatList
+          data={products}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.productCard}
+              onPress={() => router.push("/(tabs)/carrinho")}>
+              <Image 
+              source={{ uri: item.imageBase64 || "https://via.placeholder.com/60" }} style={styles.productImage} />
+              <Text style={styles.productName}>{item.name}</Text>
+              <Text style={styles.productPrice}>R${item.price?.toFixed(2)}</Text>
+            </TouchableOpacity>
+          )}
+          keyExtractor={(item, index) => item.id?.toString() || index.toString()}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.productList}
+          ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
+        />
+      )}
+      {loading ? (
+        <ActivityIndicator size="large" color="#00D361" style={{ marginTop: 20 }} />
+      ) : (
+        <FlatList
+          data={products}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.productCard}
+              onPress={() => router.push("/(tabs)/carrinho")}>
+              <Image 
+              source={{ uri: item.imageBase64 || "https://via.placeholder.com/60" }} style={styles.productImage} />
+              <Text style={styles.productName}>{item.name}</Text>
+              <Text style={styles.productPrice}>R${item.price?.toFixed(2)}</Text>
             </TouchableOpacity>
           )}
           keyExtractor={(item, index) => item.id?.toString() || index.toString()}
@@ -172,7 +218,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   productCard: {
-    backgroundColor: "#f0f0f0",
+    flexDirection: "column",
+    // height: 140,
+    backgroundColor: "#f5f5f5",
     padding: 16,
     borderRadius: 12,
     alignItems: "center",
@@ -194,13 +242,11 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#00D361",
     marginTop: 4,
   },
   orderText: {
     marginTop: 4,
     fontSize: 12,
-    color: "#00D361",
     fontWeight: "500",
   },
 });

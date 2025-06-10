@@ -5,9 +5,13 @@ const API_URL = "http://localhost:8080/api/v1/product";
 
 const mockProducts = [
   // Fruits
-  { id: 1, name: "Banana", price: 3.5, category: "Fruits", imageBase64: "https://via.placeholder.com/60?text=Banana" },
-  { id: 2, name: "Maçã", price: 4.2, category: "Fruits", imageBase64: "https://via.placeholder.com/60?text=Maçã" },
-  { id: 3, name: "Uva", price: 6.0, category: "Fruits", imageBase64: "https://via.placeholder.com/60?text=Uva" },
+  { id: 1, name: "Banana", price: 3.5, category: "Fruits", imageBase64: "https://cdn.awsli.com.br/600x450/502/502061/produto/18364412/8aaa8433f9.jpg" },
+  { id: 2, name: "Maçã", price: 4.2, category: "Fruits", imageBase64: "https://superprix.vteximg.com.br/arquivos/ids/175207-600-600/Maca-Argentina--1-unidade-aprox.-200g-.png?v=636294203590200000" },
+  { id: 3, name: "Uva", price: 6.0, category: "Fruits", imageBase64: "https://superprix.vteximg.com.br/arquivos/ids/179168-600-600/Uva-Vitoria-Bandeja-773417.png?v=636970945188000000" },
+
+  { id: 13, name: "Banana", price: 3.5, category: "Fruits", imageBase64: "https://cdn.awsli.com.br/600x450/502/502061/produto/18364412/8aaa8433f9.jpg" },
+  { id: 14, name: "Maçã", price: 4.2, category: "Fruits", imageBase64: "https://superprix.vteximg.com.br/arquivos/ids/175207-600-600/Maca-Argentina--1-unidade-aprox.-200g-.png?v=636294203590200000" },
+  { id: 15, name: "Uva", price: 6.0, category: "Fruits", imageBase64: "https://superprix.vteximg.com.br/arquivos/ids/179168-600-600/Uva-Vitoria-Bandeja-773417.png?v=636970945188000000" },
 
   // Vegetables
   { id: 4, name: "Alface", price: 2.0, category: "Vegetables", imageBase64: "https://via.placeholder.com/60?text=Alface" },

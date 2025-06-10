@@ -1,6 +1,6 @@
+import { useProductDetail } from "@/hooks/useProductDetail";
 import { FontAwesome } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
 import {
   Image,
   SafeAreaView,
@@ -18,30 +18,21 @@ const product = {
 };
 
 export default function ProductDetailScreen() {
-  const [quantity, setQuantity] = useState(2);
-  const [showCheckout, setShowCheckout] = useState(false);
-  const router = useRouter();
-
-  const increment = () => setQuantity((prev) => prev + 1);
-  const decrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
-
-  const total = (product.price * quantity).toFixed(2);
-
-  const handleAddToCart = () => {
-    // Aqui você pode adicionar o item ao carrinho real
-    setShowCheckout(true); // Exibe o botão "Finalizar Compra"
-  };
-
-  const handleCheckout = () => {
-    // Aqui você pode navegar para a tela de checkout ou fazer alguma ação
-    // alert("Ir para o checkout");
-    router.push("/PagamentoScreen");
-  };
+  const {
+    quantity,
+    showCheckout,
+    total,
+    increment,
+    decrement,
+    handleAddToCart,
+    handleCheckout,
+    goBack,
+  } = useProductDetail(product.price);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={goBack}>
           <FontAwesome name="chevron-left" size={24} />
         </TouchableOpacity>
         <FontAwesome name="heart-o" size={24} />
