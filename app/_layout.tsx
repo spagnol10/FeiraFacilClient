@@ -19,16 +19,19 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="ForgotPassword" options={{ headerShown: false }} />
-        <Stack.Screen name="RegisterScreen" options={{ headerShown: false }} />
-        <Stack.Screen name="ResetPassword" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-        <Stack.Screen name="PagamentoScreen" options={{ headerShown: false }} />
-        <Stack.Screen name="VendaRealizadaScreen" options={{ headerShown: false }} />
-      </Stack>
+      {/* <CartProvider> */}
+        <Stack>
+
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="ForgotPassword" options={{ headerShown: false }} />
+          <Stack.Screen name="RegisterScreen" options={{ headerShown: false }} />
+          <Stack.Screen name="ResetPassword" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+          <Stack.Screen name="PagamentoScreen" options={{ headerShown: false }} />
+          <Stack.Screen name="VendaRealizadaScreen" options={{ headerShown: false }} />
+        </Stack>
+      {/* </CartProvider> */}
       <StatusBar style="auto" />
     </ThemeProvider>
   );

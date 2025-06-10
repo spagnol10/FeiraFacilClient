@@ -1,5 +1,6 @@
 import { QrCodeScanner } from "@/components/QrCodeScanner";
 import { usePaymentScreen } from "@/hooks/usePaymentScreen";
+import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import {
   ScrollView,
@@ -9,7 +10,13 @@ import {
   View,
 } from "react-native";
 
+
 export default function PaymentScreen() {
+  const { totalPrice } = useLocalSearchParams();
+  // Ensure totalPrice is string or number, not array
+  const parsedTotalPrice =
+    Array.isArray(totalPrice) ? totalPrice[0] : totalPrice;
+
   const {
     selectedDelivery,
     setSelectedDelivery,
@@ -19,7 +26,11 @@ export default function PaymentScreen() {
     setShowScanner,
     handleQrScanned,
     finalizePayment,
-  } = usePaymentScreen();
+  } = usePaymentScreen(parsedTotalPrice);
+
+  const basePrice = Number(totalPrice);
+  const deliveryCost = selectedDelivery === "fast" ? 9.99 : 0;
+  const finalPrice = (basePrice + deliveryCost).toFixed(2);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -43,13 +54,12 @@ export default function PaymentScreen() {
 
       <Text style={styles.sectionTitle}>Hoje, 24-34 min</Text>
 
-      {/* Opções de entrega */}
       <View style={styles.deliveryOptions}>
         {[
           {
             label: "Padrão",
             time: "Hoje, 24–34 min",
-            price: "R$ 2,99",
+            price: "Grátis",
             value: "standard",
           },
           {
@@ -94,14 +104,13 @@ export default function PaymentScreen() {
             ]}
             onPress={() => setSelectedPayment(label.toLowerCase() as any)}
           >
-            {/* <Image source={require("@/assets/images/banana.png")} style={styles.paymentIcon} /> */}
             <Text style={styles.paymentLabel}>{label}</Text>
           </TouchableOpacity>
         ))}
       </View>
 
       <TouchableOpacity style={styles.finishPayment} onPress={finalizePayment}>
-        <Text style={styles.paymentButtonText}>Finalizar pedido</Text>
+        <Text style={styles.paymentButtonText}>Finalizar pedido {finalPrice} </Text>
       </TouchableOpacity>
 
       <QrCodeScanner
@@ -187,96 +196,6 @@ const styles = StyleSheet.create({
     color: "#333",
     marginTop: 5,
   },
-  paymentTabContainer: {
-    flexDirection: "row",
-    marginBottom: 15,
-  },
-  paymentTab: {
-    fontSize: 16,
-    color: "#999",
-    marginRight: 20,
-  },
-  paymentOption: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  paymentLabel: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 6,
-    color: "#333",
-  },
-  paymentDesc: {
-    fontSize: 14,
-    color: "#666",
-  },
-  cardImage: {
-    width: 80,
-    height: 80,
-    alignSelf: "center",
-    marginBottom: 10,
-  },
-  cardButton: {
-    marginTop: 10,
-    paddingVertical: 10,
-    borderRadius: 6,
-    backgroundColor: "#00D361",
-    alignItems: "center",
-  },
-  cardButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  modalBackground: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    width: "90%",
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  cardTypeButton: {
-    width: "100%",
-    padding: 15,
-    backgroundColor: "#F5F5F5",
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  cardTypeText: {
-    fontSize: 16,
-    color: "#333",
-  },
-  cancelText: {
-    color: "#00D361",
-    fontWeight: "bold",
-    marginTop: 15,
-  },
-  paymentButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  finishPayment: {
-    backgroundColor: "#00D361",
-    paddingVertical: 16,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 30,
-  },
   paymentOptionsList: {
     marginBottom: 30,
   },
@@ -290,9 +209,21 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     marginBottom: 10,
   },
-  paymentIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
+  paymentLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  finishPayment: {
+    backgroundColor: "#00D361",
+    paddingVertical: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  paymentButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

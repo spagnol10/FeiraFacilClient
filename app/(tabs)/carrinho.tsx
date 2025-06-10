@@ -11,6 +11,7 @@ import {
 } from "react-native";
 
 const product = {
+  id: 1,
   name: "Banana",
   price: 9.22,
   image: require("@/assets/images/banana.png"),
@@ -27,7 +28,7 @@ export default function ProductDetailScreen() {
     handleAddToCart,
     handleCheckout,
     goBack,
-  } = useProductDetail(product.price);
+  } = useProductDetail(product);
 
   return (
     <SafeAreaView style={styles.container}>
