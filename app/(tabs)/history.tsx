@@ -1,4 +1,5 @@
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
   FlatList,
@@ -36,6 +37,7 @@ const ordersData = [
 ];
 
 export default function OrdersHistoryScreen() {
+  const navigation = useNavigation();
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
   const toggleExpand = (id: string) => {
@@ -57,7 +59,9 @@ export default function OrdersHistoryScreen() {
             <Text style={styles.store}>{order.store}</Text>
             <View style={styles.statusRow}>
               <MaterialIcons name="check-box" color="green" size={18} />
-              <Text style={styles.status}>Pedido Concluido - {order.orderNumber}</Text>
+              <Text style={styles.status}>
+                Pedido Concluido - {order.orderNumber}
+              </Text>
             </View>
           </View>
         </View>
@@ -73,7 +77,10 @@ export default function OrdersHistoryScreen() {
           ))}
         </View>
 
-        <TouchableOpacity onPress={() => toggleExpand(order.id)} style={styles.expandButton}>
+        <TouchableOpacity
+          onPress={() => toggleExpand(order.id)}
+          style={styles.expandButton}
+        >
           <Ionicons
             name={isExpanded ? "chevron-up" : "chevron-down"}
             size={18}
@@ -87,12 +94,12 @@ export default function OrdersHistoryScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.headerTop}>
-        <Ionicons name="arrow-back" size={24} color="#000" />
-        {/* <Text style={styles.headerTitle}>My orders</Text> */}
-        <View style={{ width: 24 }} /> {/* Placeholder para centralizar o título */}
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Meus pedidos</Text>
+        <View style={{ width: 24 }} />
       </View>
-
-      {/* <Text style={styles.dateText}>Qua. 21 Agosto 2024</Text> */}
 
       <FlatList
         data={ordersData}
@@ -127,11 +134,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: "600",
-  },
-  dateText: {
-    fontSize: 14,
-    color: "#888",
-    marginBottom: 12,
   },
   card: {
     backgroundColor: "#fff",
@@ -202,4 +204,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-

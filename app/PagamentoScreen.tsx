@@ -137,12 +137,12 @@ export default function PaymentScreen() {
                 </Modal>
             </TouchableOpacity>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 style={styles.paymentButton}
                 onPress={() => setShowScanner(true)}
             >
                 <Text style={styles.paymentButtonText}>Realizar pagamento</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity
                 style={styles.finishPayment}

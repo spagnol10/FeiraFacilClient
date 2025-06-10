@@ -1,11 +1,11 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import QRCode from 'react-native-qrcode-svg';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
 
-// Tipagem da stack
 type RootStackParamList = {
   PaymentSuccess: { orderId: string };
   OrderTracking: { orderId: string };
@@ -18,6 +18,8 @@ const PaymentSuccessScreen = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<PaymentSuccessScreenRouteProp>();
   const orderId = route.params.orderId;
+  const router = useRouter();
+
 
   return (
     <View style={styles.container}>
@@ -32,7 +34,7 @@ const PaymentSuccessScreen = () => {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('OrderTracking', { orderId })}
+        onPress={() => router.push("/(tabs)/history")}
       >
         <Text style={styles.buttonText}>Acompanhar pedido</Text>
       </TouchableOpacity>

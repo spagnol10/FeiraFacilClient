@@ -6,3 +6,17 @@ export interface User {
   avatar: string;
 }
 
+
+
+type OrderItem = {
+  name: string;
+  quantity: number;
+};
+
+type Order = {
+  id: string;
+  date: string;
+  store: string;
+  orderNumber: string;
+  items: OrderItem[];
+};

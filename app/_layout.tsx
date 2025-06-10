@@ -26,6 +26,8 @@ export default function RootLayout() {
         <Stack.Screen name="ResetPassword" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
+        <Stack.Screen name="PagamentoScreen" options={{ headerShown: false }} />
+        <Stack.Screen name="VendaRealizadaScreen" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

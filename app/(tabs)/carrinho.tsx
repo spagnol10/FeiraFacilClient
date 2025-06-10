@@ -13,7 +13,7 @@ import {
 const product = {
   name: "Banana",
   price: 9.22,
-  image: require("@/assets/images/banana.png"), 
+  image: require("@/assets/images/banana.png"),
   description: "Your internet connection is currently not available please check or try again.",
 };
 
@@ -41,7 +41,9 @@ export default function ProductDetailScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topBar}>
-        <FontAwesome name="chevron-left" size={24} />
+        <TouchableOpacity onPress={() => router.back()}>
+          <FontAwesome name="chevron-left" size={24} />
+        </TouchableOpacity>
         <FontAwesome name="heart-o" size={24} />
       </View>
 
@@ -68,7 +70,7 @@ export default function ProductDetailScreen() {
           </View>
 
           <TouchableOpacity style={styles.addToCartButton} onPress={handleAddToCart}>
-            <Text style={styles.addToCartText}>Add To Cart</Text>
+            <Text style={styles.addToCartText}>Adicionar</Text>
             <Text style={styles.totalPrice}>R${total}</Text>
           </TouchableOpacity>
         </View>
@@ -160,6 +162,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
   },
   addToCartButton: {
+    flex: 1,
     backgroundColor: "#00D361",
     paddingVertical: 12,
     paddingHorizontal: 20,
