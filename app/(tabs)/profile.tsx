@@ -91,14 +91,6 @@ export default function ProfileScreen() {
       />
 
       <InputWithIcon
-        label="Telefone"
-        value={user.phone}
-        placeholder="Telefone"
-        iconName="call-outline"
-        keyboardType="phone-pad"
-      />
-
-      <InputWithIcon
         label="Senha"
         value={user.password}
         onChangeText={(text) => setUser({ ...user, password: text })}

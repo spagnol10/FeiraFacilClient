@@ -1,6 +1,6 @@
-const API_BASE_URL = "http://localhost:8080/api/v1";
+// const API_BASE_URL = "http://localhost:8080/api/v1";
 
-// const API_BASE_URL = "https://f509-177-84-133-168.ngrok-free.app/api/v1";
+const API_BASE_URL = "https://5aa2-177-53-200-49.ngrok-free.app/api/v1";
 
 const headers = {
   "Content-Type": "application/json",
@@ -28,7 +28,12 @@ export const preRegister = async (user: {
     throw new Error(errorText || "Erro no pré-registro.");
   }
 
-  return await response.json();
+  const contentLength = response.headers.get("content-length");
+  if (contentLength && parseInt(contentLength) > 0) {
+    return await response.json();
+  }
+
+  return { success: true };
 };
 
 export const login = async (email: string, password: string) => {

@@ -22,7 +22,7 @@ export const useRegister = () => {
       router.push("/");
     } catch (error: any) {
       console.error("Erro no registro:", error);
-      Alert.alert("Erro", error.message || "Falha no pré-registro.");
+      // Alert.alert("Erro", error.message || "Falha no pré-registro.");
     } finally {
       setLoading(false);
     }

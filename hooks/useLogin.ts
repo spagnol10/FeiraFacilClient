@@ -29,6 +29,8 @@ export const useLogin = () => {
     try {
       setLoading(true);
       const userData = await login(email, password);
+      
+      await AsyncStorage.setItem("token", userData.token);
 
       if (rememberMe) {
         await AsyncStorage.setItem("rememberedEmail", email);
@@ -36,11 +38,9 @@ export const useLogin = () => {
         await AsyncStorage.removeItem("rememberedEmail");
       }
 
-      // Alert.alert("Sucesso", "Login bem-sucedido!");
       router.push("/(tabs)/home");
     } catch (error: any) {
       console.log("Erro ao fazer login:", error);
-      
       Alert.alert("Erro", error.message || "Erro ao fazer login.");
     } finally {
       setLoading(false);

@@ -15,7 +15,7 @@ import {
 
 export default function ResetPassword() {
   const { token } = useLocalSearchParams<{ token: string }>();
-  const [email] = useState<string>("wrospagnol@gmail.com");
+  const [email] = useState<string>("");
 
   const {
     newPassword,

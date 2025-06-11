@@ -10,7 +10,6 @@ import {
   View,
 } from "react-native";
 
-
 export default function PaymentScreen() {
   const { totalPrice } = useLocalSearchParams();
   // Ensure totalPrice is string or number, not array

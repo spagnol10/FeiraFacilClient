@@ -16,10 +16,10 @@ import {
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 export default function RegisterScreen() {
-  const [name, setName] = useState("Wellynton Spagnol");
-  const [email, setEmail] = useState("wrospagnol@gmail.com");
-  const [phone, setPhone] = useState("45991558558");
-  const [password, setPassword] = useState("123456");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
 

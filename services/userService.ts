@@ -1,10 +1,22 @@
 import { User } from "@/types/User";
 
-const API_URL = 'http://localhost:8080/users';
+const API_URL = 'http://localhost:8080/api/v1/user';
 
-export const fetchUser = async (email: string): Promise<User> => {
-  const response = await fetch(`${API_URL}/${email}`);
-  if (!response.ok) throw new Error("Erro ao buscar usuário");
+export const fetchUser = async (token: string): Promise<User> => {
+  console.log(`Buscando usuário com token: ${token}`);
+  
+  const response = await fetch(API_URL, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Erro ao buscar usuário");
+  }
+
   return await response.json();
 };
 
@@ -17,3 +29,4 @@ export const updateUser = async (user: User): Promise<void> => {
 
   if (!response.ok) throw new Error("Erro ao atualizar usuário");
 };
+
